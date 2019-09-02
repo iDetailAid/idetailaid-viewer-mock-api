@@ -12,7 +12,9 @@ To build a viewer specific version of the API follow these steps:
   * Preview a slide
   * Open the console
   * Run the following command:
-    `#!js Viewer.api.buildMockAPI()`
+````
+Viewer.api.buildMockAPI()
+````
 
  This wills save a JS file that mocks the API for that version of the Viewer.
  
