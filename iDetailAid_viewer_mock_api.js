@@ -48,12 +48,12 @@ triggerMockEvent: (...args) => {
         data.duration = 12345;
       }
       if (['overlayOpen', 'overlayOpened', 'overlayClose', 'overlayClosed'].includes(name)) {
-        data.slide = matrix[0][2];
-        data.overlay = matrix[0][2].overlays[0];
+        data.slide = mockManifest.matrix[1][1];
+        data.overlay = mockManifest.matrix[1][1].overlays[0];
       }
       if (['goBack', 'goUp', 'goDown', 'goLeft', 'goRight'].includes(name)) {
         data.destination = {
-          slide: matrix[0][2]
+          slide: mockManifest.matrix[0][2]
         };
       }
       if (name === 'urlOpen') {
@@ -282,6 +282,15 @@ getCurrentSlideDetails: (...args) => {
 }
 }
 
+// Set up the iFrame API calls
+window.uk.co.idetailaid.iframe = window.uk.co.idetailaid.iframe || {
+  trigger: (...args) => console.debug('ida.iframe.trigger called with :', args)
+}
+
+window.uk.co.idetailaid.slide = window.uk.co.idetailaid.slide || { slide:  window.uk.co.idetailaid.MockManifest.matrix[0][0], x:0, y:0, element:{} };
+window.uk.co.idetailaid.template = window.uk.co.idetailaid.template || {template:window.uk.co.idetailaid.slide.template, scope:{} };
+window.uk.co.idetailaid.manifest = window.uk.co.idetailaid.manifest || window.uk.co.idetailaid.MockManifest;
+     
 if (window.Viewer && (window.Viewer != window.uk.co.idetailaid.Viewer)) {
   console.warn('Global var `Viewer` has already been defined, use `uk.co.idetailaid.Viewer` or `ida.Viewer` to target the iDetailAid Viewer');
 } else if (!window.Viewer) {
@@ -290,6 +299,6 @@ if (window.Viewer && (window.Viewer != window.uk.co.idetailaid.Viewer)) {
 
 if (window.ida && (window.ida != window.uk.co.idetailaid)) {
   console.warn('Global var `ida` has already been defined, use `uk.co.idetailaid` to target the iDetailAid namespace');
-} else if (!window.Viewer) {
+} else if (!window.ida) {
   window.ida = window.uk.co.idetailaid;
 }
