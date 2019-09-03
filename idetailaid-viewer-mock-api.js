@@ -2,43 +2,110 @@ window.uk = window.uk || {};
 window.uk.co = window.uk.co || {};
 window.uk.co.idetailaid = window.uk.co.idetailaid || {};
 
+window.uk.co.idetailaid.Events = {ALL:['goto','goUp','goDown','goLeft','goRight','goBack','presentationLoad','presentationLoaded','manifestLoaded','slideLoad','slideLoaded','slideMove','slideEnter','slideShown','slideExit','slideMoved','slideUnload','virtualSlideShown','virtualSlideExit','overlayClosed','overlayOpen','overlayOpened','referenceOpen','videoPlay','videoSeeked','videoPause','videoEnded','arrowsRender','urlOpen','assetOpen','tap','doubletap','singletap','swiped','widgetAnimated','iFrameReady']};
+window.uk.co.idetailaid.Utils = {dispatchIDAEvent:function(eventName, data) {
+      var e, error, event;
+      event = new CustomEvent(eventName, {
+        bubbles: true,
+        cancelable: true,
+        detail: data
+      });
+      try {
+        if ((data != null ? data.element : void 0) != null) {
+          return data.element.dispatchEvent(event);
+        } else {
+          return document.dispatchEvent(event);
+        }
+      } catch (error) {
+        e = error;
+        return console.log(e);
+      }
+    }};
+
 window.uk.co.idetailaid.Viewer = window.uk.co.idetailaid.Viewer || {
 api: {
-buildMockAPI: (...args) => { 
-  console.debug('Viewer.api.buildMockAPI called with:', args);
+writeMockAPI: (...args) => { 
+  console.debug('Viewer.api.writeMockAPI called with:', args);
 },
-setArrows: (...args) => { 
+writeMockManifest: (...args) => { 
+  console.debug('Viewer.api.writeMockManifest called with:', args);
+},
+triggerMockEvent: (...args) => {
+  const triggerMockEvent = function(name, data) {
+      if (data == null) {
+        data = {};
+      }
+      if (!Events.ALL.includes(name)) {
+        console.error("`" + name + "` is not a valid event name. Use one of", Events.ALL);
+      }
+      data.company = data.company || mockManifest.company;
+      data.product = data.product || mockManifest.product;
+      data.presentation = data.presentation || mockManifest.presentation;
+      data.manifest = data.manifest || mockManifest;
+      data.slide = data.slide || mockManifest.matrix[0][0];
+      data.timeStamp = data.timeStamp || Date.now();
+      if (['slideExit', 'overlayClose', 'overlayClosed', 'videoPause', 'videoEnded'].includes(name)) {
+        data.duration = 12345;
+      }
+      if (['overlayOpen', 'overlayOpened', 'overlayClose', 'overlayClosed'].includes(name)) {
+        data.slide = matrix[0][2];
+        data.overlay = matrix[0][2].overlays[0];
+      }
+      if (['goBack', 'goUp', 'goDown', 'goLeft', 'goRight'].includes(name)) {
+        data.destination = {
+          slide: matrix[0][2]
+        };
+      }
+      if (name === 'urlOpen') {
+        data.url = 'https://www.idetailaid.co.uk';
+      }
+      if (name === 'assetOpen') {
+        data.asset = {
+          id: 100,
+          file: '07feb1219520756f8f3236668cec01de.png',
+          type: 'image/png'
+        };
+      }
+      if (name === 'referenceOpen') {
+        data.reference = {
+          id: 100,
+          file: '07feb1219520756f8f3236668cec01de.pdf',
+          type: 'application/pdf',
+          citation: '<i>Jones et al 1999</i>',
+          number: 1,
+          asset_id: 200
+        };
+      }
+      if (['videoPlay', 'videoPause', 'videoEnded'].includes(name)) {
+        data.video = {
+          id: 100,
+          file: '07feb1219520756f8f3236668cec01de.mov',
+          src: '07feb1219520756f8f3236668cec01de.mov',
+          type: 'video/quicktime',
+          idaManaged: true,
+          data: {}
+        };
+      }
+      if (data.duration) {
+        data.start = data.timeStamp - data.duration;
+        data.end = data.timeStamp;
+      }
+      return Utils.dispatchIDAEvent(name, data);
+    }
+
+  const Events = window.uk.co.idetailaid.Events;
+  const Utils = window.uk.co.idetailaid.Utils;
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  triggerMockEvent.apply(this, args);
+},setArrows: (...args) => { 
   console.debug('Viewer.api.setArrows called with:', args);
 },
 getArrows: (...args) => { 
-  const data=[
-  [
-    [
-      {
-        "left": false,
-        "right": false
-      }
-    ],
-    [
-      {
-        "right": false
-      }
-    ],
-    [],
-    [
-      {
-        "up": false
-      }
-    ]
-  ],
-  [
-    [
-      {
-        "up": false
-      }
-    ]
-  ]
-]; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=JSON.parse('[[[{"left":false,"right":false}],[{"right":false}],[],[{"up":false}]],[[{"up":false}]]]'); 
+  
   console.debug('Viewer.api.getArrows called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -52,34 +119,10 @@ setSwipe: (...args) => {
   console.debug('Viewer.api.setSwipe called with:', args);
 },
 getSwipe: (...args) => { 
-  const data=[
-  [
-    [
-      {
-        "left": false,
-        "right": false
-      }
-    ],
-    [
-      {
-        "right": false
-      }
-    ],
-    [],
-    [
-      {
-        "up": false
-      }
-    ]
-  ],
-  [
-    [
-      {
-        "up": false
-      }
-    ]
-  ]
-]; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=JSON.parse('[[[{"left":false,"right":false}],[{"right":false}],[],[{"up":false}]],[[{"up":false}]]]'); 
+  
   console.debug('Viewer.api.getSwipe called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -135,13 +178,12 @@ hideVirtualSlide: (...args) => {
   console.debug('Viewer.api.hideVirtualSlide called with:', args);
 },
 getCurrentPresentation: (...args) => { 
-  const data={
-  "country_code": "go",
-  "hidden": 0,
-  "id": 201,
-  "meta": {},
-  "title": "Mock Presentation"
-}; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=function() {
+            return mockManifest.presentation;
+          }(); 
+  
   console.debug('Viewer.api.getCurrentPresentation called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -152,129 +194,12 @@ getCurrentPresentation: (...args) => {
   })
 },
 getCurrentPresentationManifest: (...args) => { 
-  const data={
-  "id": "default",
-  "title": "Mock Presentation (Diabotan / Global)",
-  "presentation": {
-    "title": "Mock Presentation",
-    "hidden": 0,
-    "meta": {},
-    "id": 201,
-    "country_code": "go"
-  },
-  "product": {
-    "id": 1,
-    "name": "Diabotan"
-  },
-  "company": {
-    "id": 1,
-    "name": "PharmaCo"
-  },
-  "css": [],
-  "js": [],
-  "templates": {
-    "1336": {
-      "id": 1336,
-      "title": "Mock Core Flow Template",
-      "file": "07feb1219520756f8f3236668cec01de.html",
-      "reference_ids": [],
-      "navigation_ids": []
-    },
-    "1347": {
-      "id": 1347,
-      "title": "Mock Sub Flow Template",
-      "file": "79b16d11f43874b15da438b3a136e911.html",
-      "reference_ids": [],
-      "navigation_ids": []
-    }
-  },
-  "references": [],
-  "navigation": [],
-  "matrix": [
-    [
-      {
-        "title": "Mock Slide One",
-        "file": "9560d5eeaaabed937b0a35e6fe4cc148.html",
-        "image": "9560d5eeaaabed937b0a35e6fe4cc148.png",
-        "mandatory": 0,
-        "reference_ids": [],
-        "meta": {},
-        "template_id": null,
-        "overlays": [],
-        "category": null,
-        "id": 1348
-      }
-    ],
-    [
-      {
-        "title": "Mock Slide Two",
-        "file": "bfc25cc9623a1790d0f49fe79adbddd0.html",
-        "image": "bfc25cc9623a1790d0f49fe79adbddd0.png",
-        "mandatory": 0,
-        "reference_ids": [],
-        "meta": {},
-        "template_id": null,
-        "overlays": [],
-        "category": null,
-        "id": 1349
-      },
-      {
-        "title": "Mock Slide Four",
-        "file": "373becea7a7512d50ab5f2e26c5900cd.html",
-        "image": "373becea7a7512d50ab5f2e26c5900cd.png",
-        "mandatory": 0,
-        "reference_ids": [],
-        "meta": {},
-        "template_id": 1336,
-        "overlays": [
-          {
-            "id": "53d362eb-3b40-46ad-94bf-0cb943294a70",
-            "title": "Overlay 1",
-            "style": "diabotan-overlay-large",
-            "image": "373becea7a7512d50ab5f2e26c5900cd_overlay_53d362eb-3b40-46ad-94bf-0cb943294a70_large.png",
-            "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/373becea7a7512d50ab5f2e26c5900cd_overlay_53d362eb-3b40-46ad-94bf-0cb943294a70_large.png",
-            "in_use": true
-          }
-        ],
-        "category": null,
-        "id": 1344
-      }
-    ],
-    [
-      {
-        "title": "Mock Slide Three",
-        "file": "65733e4f037dfc13b0f840246fa79c33.html",
-        "image": "65733e4f037dfc13b0f840246fa79c33.png",
-        "mandatory": 0,
-        "reference_ids": [],
-        "meta": {},
-        "template_id": 1347,
-        "overlays": [
-          {
-            "id": "fd63d504-d032-420e-eb59-f3eaa8e773f8",
-            "title": "Overlay 1",
-            "style": "diabotan-overlay-large",
-            "image": "65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-            "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-            "in_use": true
-          },
-          {
-            "id": "0d299d66-0591-41fa-9df3-4997c539c2f1",
-            "title": "Overlay 2",
-            "style": "diabotan-overlay-large",
-            "image": "65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-            "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-            "in_use": false
-          }
-        ],
-        "category": "this",
-        "id": 1346
-      }
-    ]
-  ],
-  "timeStamp": 1567462155648,
-  "settings": {}
-}; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=function() {
+            return mockManifest;
+          }(); 
+  
   console.debug('Viewer.api.getCurrentPresentationManifest called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -285,83 +210,12 @@ getCurrentPresentationManifest: (...args) => {
   })
 },
 getCurrentPresentationSlides: (...args) => { 
-  const data=[
-  {
-    "title": "Mock Slide One",
-    "file": "9560d5eeaaabed937b0a35e6fe4cc148.html",
-    "image": "9560d5eeaaabed937b0a35e6fe4cc148.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": null,
-    "overlays": [],
-    "category": null,
-    "id": 1348,
-    "viewStart": 1567445526350
-  },
-  {
-    "title": "Mock Slide Two",
-    "file": "bfc25cc9623a1790d0f49fe79adbddd0.html",
-    "image": "bfc25cc9623a1790d0f49fe79adbddd0.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": null,
-    "overlays": [],
-    "category": null,
-    "id": 1349
-  },
-  {
-    "title": "Mock Slide Four",
-    "file": "373becea7a7512d50ab5f2e26c5900cd.html",
-    "image": "373becea7a7512d50ab5f2e26c5900cd.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": 1336,
-    "overlays": [
-      {
-        "id": "53d362eb-3b40-46ad-94bf-0cb943294a70",
-        "title": "Overlay 1",
-        "style": "diabotan-overlay-large",
-        "image": "373becea7a7512d50ab5f2e26c5900cd_overlay_53d362eb-3b40-46ad-94bf-0cb943294a70_large.png",
-        "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/373becea7a7512d50ab5f2e26c5900cd_overlay_53d362eb-3b40-46ad-94bf-0cb943294a70_large.png",
-        "in_use": false
-      }
-    ],
-    "category": null,
-    "id": 1344
-  },
-  {
-    "title": "Mock Slide Three",
-    "file": "65733e4f037dfc13b0f840246fa79c33.html",
-    "image": "65733e4f037dfc13b0f840246fa79c33.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": 1347,
-    "overlays": [
-      {
-        "id": "fd63d504-d032-420e-eb59-f3eaa8e773f8",
-        "title": "Overlay 1",
-        "style": "diabotan-overlay-large",
-        "image": "65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-        "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-        "in_use": true
-      },
-      {
-        "id": "0d299d66-0591-41fa-9df3-4997c539c2f1",
-        "title": "Overlay 2",
-        "style": "diabotan-overlay-large",
-        "image": "65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-        "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-        "in_use": false
-      }
-    ],
-    "category": "this",
-    "id": 1346
-  }
-]; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=function() {
+            return mockManifest.matrix;
+          }(); 
+  
   console.debug('Viewer.api.getCurrentPresentationSlides called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -372,62 +226,14 @@ getCurrentPresentationSlides: (...args) => {
   })
 },
 getCurrentPresentationCoreFlowSlides: (...args) => { 
-  const data=[
-  {
-    "title": "Mock Slide One",
-    "file": "9560d5eeaaabed937b0a35e6fe4cc148.html",
-    "image": "9560d5eeaaabed937b0a35e6fe4cc148.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": null,
-    "overlays": [],
-    "category": null,
-    "id": 1348,
-    "viewStart": 1567445526350
-  },
-  {
-    "title": "Mock Slide Two",
-    "file": "bfc25cc9623a1790d0f49fe79adbddd0.html",
-    "image": "bfc25cc9623a1790d0f49fe79adbddd0.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": null,
-    "overlays": [],
-    "category": null,
-    "id": 1349
-  },
-  {
-    "title": "Mock Slide Three",
-    "file": "65733e4f037dfc13b0f840246fa79c33.html",
-    "image": "65733e4f037dfc13b0f840246fa79c33.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": 1347,
-    "overlays": [
-      {
-        "id": "fd63d504-d032-420e-eb59-f3eaa8e773f8",
-        "title": "Overlay 1",
-        "style": "diabotan-overlay-large",
-        "image": "65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-        "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_fd63d504-d032-420e-eb59-f3eaa8e773f8_large.png",
-        "in_use": true
-      },
-      {
-        "id": "0d299d66-0591-41fa-9df3-4997c539c2f1",
-        "title": "Overlay 2",
-        "style": "diabotan-overlay-large",
-        "image": "65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-        "image_url": "http://192.168.10.100/assets/pharmaco/diabotan/go/65733e4f037dfc13b0f840246fa79c33_overlay_0d299d66-0591-41fa-9df3-4997c539c2f1_large.png",
-        "in_use": false
-      }
-    ],
-    "category": "this",
-    "id": 1346
-  }
-]; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=function() {
+            return mockManifest.matrix.map(function(col) {
+              return col[0];
+            });
+          }(); 
+  
   console.debug('Viewer.api.getCurrentPresentationCoreFlowSlides called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
@@ -437,24 +243,32 @@ getCurrentPresentationCoreFlowSlides: (...args) => {
     resolve(data); 
   })
 },
+getCurrentPresentationSubFlowSlides: (...args) => { 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=JSON.parse('[{"title":"Mock Slide One","file":"9560d5eeaaabed937b0a35e6fe4cc148.html","image":"9560d5eeaaabed937b0a35e6fe4cc148.png","mandatory":0,"reference_ids":[],"meta":{},"template_id":null,"overlays":[],"category":"Safety","id":1348}]'); 
+  
+  console.debug('Viewer.api.getCurrentPresentationSubFlowSlides called with :', args); 
+  return new Promise( (resolve, reject) => { 
+    callback = args.pop();
+    if (typeof callback === 'function') {
+      callback(data); 
+    } 
+    resolve(data); 
+  })
+},
 getCurrentSlideDetails: (...args) => { 
-  const data={
-  "slide": {
-    "title": "Mock Slide One",
-    "file": "9560d5eeaaabed937b0a35e6fe4cc148.html",
-    "image": "9560d5eeaaabed937b0a35e6fe4cc148.png",
-    "mandatory": 0,
-    "reference_ids": [],
-    "meta": {},
-    "template_id": null,
-    "overlays": [],
-    "category": null,
-    "id": 1348
-  },
-  "x": 0,
-  "y": 0,
-  "element": {}
-}; 
+  const mockManifest = window.uk.co.idetailaid.MockManifest;
+  
+  const data=function() {
+            return {
+              "slide": mockManifest.matrix[0][0],
+              "x": 0,
+              "y": 0,
+              "element": {}
+            };
+          }(); 
+  
   console.debug('Viewer.api.getCurrentSlideDetails called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
