@@ -287,7 +287,13 @@ window.uk.co.idetailaid.iframe = window.uk.co.idetailaid.iframe || {
   trigger: (...args) => console.debug('ida.iframe.trigger called with :', args)
 }
 
-window.uk.co.idetailaid.slide = window.uk.co.idetailaid.slide || { slide:  window.uk.co.idetailaid.MockManifest ? window.uk.co.idetailaid.MockManifest.matrix[0][0] : {}, x:0, y:0, element:{} };
+window.uk.co.idetailaid.slide = window.uk.co.idetailaid.slide || { 
+  slide:  window.uk.co.idetailaid.MockManifest ? window.uk.co.idetailaid.MockManifest.matrix[0][0] : {}, 
+  template:  window.uk.co.idetailaid.MockManifest ? window.uk.co.idetailaid.MockManifest.templates[window.uk.co.idetailaid.MockManifest.matrix[0][0].template_id] : {}, 
+  x:0, 
+  y:0, 
+  element:{} 
+  };
 window.uk.co.idetailaid.template = window.uk.co.idetailaid.template || {template:window.uk.co.idetailaid.slide.template || {}, scope:{} };
 window.uk.co.idetailaid.manifest = window.uk.co.idetailaid.manifest || window.uk.co.idetailaid.MockManifest;
      
