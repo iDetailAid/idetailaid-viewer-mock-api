@@ -104,15 +104,40 @@ triggerMockEvent: (...args) => {
 getArrows: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=JSON.parse('[[[{"left":false,"right":false}],[{"right":false}],[],[{"up":false}]],[[{"up":false}]]]'); 
+  const response=function() {
+            return [
+              [
+                [
+                  {
+                    left: false,
+                    right: false
+                  }
+                ], [
+                  {
+                    right: false
+                  }
+                ], [], [
+                  {
+                    up: false
+                  }
+                ]
+              ], [
+                [
+                  {
+                    up: false
+                  }
+                ]
+              ]
+            ];
+          }.apply(this, args)
   
   console.debug('Viewer.api.getArrows called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 setSwipe: (...args) => { 
@@ -121,15 +146,40 @@ setSwipe: (...args) => {
 getSwipe: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=JSON.parse('[[[{"left":false,"right":false}],[{"right":false}],[],[{"up":false}]],[[{"up":false}]]]'); 
+  const response=function() {
+            return [
+              [
+                [
+                  {
+                    left: false,
+                    right: false
+                  }
+                ], [
+                  {
+                    right: false
+                  }
+                ], [], [
+                  {
+                    up: false
+                  }
+                ]
+              ], [
+                [
+                  {
+                    up: false
+                  }
+                ]
+              ]
+            ];
+          }.apply(this, args)
   
   console.debug('Viewer.api.getSwipe called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 render: (...args) => { 
@@ -180,102 +230,108 @@ hideVirtualSlide: (...args) => {
 getCurrentPresentation: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=function() {
+  const response=function() {
             return mockManifest.presentation;
-          }(); 
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentPresentation called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 getCurrentPresentationManifest: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=function() {
+  const response=function() {
             return mockManifest;
-          }(); 
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentPresentationManifest called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 getCurrentPresentationSlides: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=function() {
-            return mockManifest.matrix;
-          }(); 
+  const response=function() {
+            if (arguments[0]) {
+              return mockManifest.matrix;
+            } else {
+              return mockManifest.matrix.flat();
+            }
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentPresentationSlides called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 getCurrentPresentationCoreFlowSlides: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=function() {
-            return mockManifest.matrix.map(function(col) {
+  const response=function() {
+            return mockManifest.matrix.map(col(function() {
               return col[0];
-            });
-          }(); 
+            }));
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentPresentationCoreFlowSlides called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 getCurrentPresentationSubFlowSlides: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=JSON.parse('[{"title":"Mock Slide One","file":"9560d5eeaaabed937b0a35e6fe4cc148.html","image":"9560d5eeaaabed937b0a35e6fe4cc148.png","mandatory":0,"reference_ids":[],"meta":{},"template_id":null,"overlays":[],"category":"Safety","id":1348}]'); 
+  const response=function() {
+            return mockManifest.matrix[0];
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentPresentationSubFlowSlides called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 getCurrentSlideDetails: (...args) => { 
   const mockManifest = window.uk.co.idetailaid.MockManifest;
   
-  const data=function() {
+  const response=function() {
             return {
               "slide": mockManifest.matrix[0][0],
               "x": 0,
               "y": 0,
               "element": {}
             };
-          }(); 
+          }.apply(this, args)
   
   console.debug('Viewer.api.getCurrentSlideDetails called with :', args); 
   return new Promise( (resolve, reject) => { 
     callback = args.pop();
     if (typeof callback === 'function') {
-      callback(data); 
+      callback(response); 
     } 
-    resolve(data); 
+    resolve(response); 
   })
 },
 
